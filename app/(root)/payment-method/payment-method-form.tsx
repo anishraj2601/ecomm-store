@@ -1,6 +1,5 @@
 "use client";
 
-import CheckoutSteps from "@/components/shared/checkout-steps";
 import { DEFAULT_PAYMENT_METHOD, PAYMENT_METHODS } from "@/lib/constants";
 import { paymentMethodSchema } from "@/lib/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,7 +16,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { updateUserPaymentMethod } from "@/lib/actions/user.actions";
 import { toast } from "sonner";
