@@ -1,6 +1,11 @@
 "use server";
 
-import { paymentMethodSchema, shippingAddressSchema, signInFormSchema, signUpFormSchema } from "../validators";
+import {
+  paymentMethodSchema,
+  shippingAddressSchema,
+  signInFormSchema,
+  signUpFormSchema,
+} from "../validators";
 import { signIn, signOut } from "next-auth/react";
 //import { signIn, signOut } from "@/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
@@ -80,7 +85,7 @@ export async function getUserById(userId: string) {
   const user = await prisma.user.findFirst({
     where: { id: userId },
   });
-  if (!user) throw new Error('User not found');
+  if (!user) throw new Error("User not found");
   return user;
 }
 
@@ -93,7 +98,7 @@ export async function updateUserAddress(data: ShippingAddress) {
       where: { id: session?.user?.id },
     });
 
-    if (!currentUser) throw new Error('User not found');
+    if (!currentUser) throw new Error("User not found");
 
     const address = shippingAddressSchema.parse(data);
 
@@ -104,7 +109,7 @@ export async function updateUserAddress(data: ShippingAddress) {
 
     return {
       success: true,
-      message: 'User updated successfully',
+      message: "User updated successfully",
     };
   } catch (error) {
     return { success: false, message: formatError(error) };
@@ -121,7 +126,7 @@ export async function updateUserPaymentMethod(
       where: { id: session?.user?.id },
     });
 
-    if (!currentUser) throw new Error('User not found');
+    if (!currentUser) throw new Error("User not found");
 
     const paymentMethod = paymentMethodSchema.parse(data);
 
@@ -132,7 +137,38 @@ export async function updateUserPaymentMethod(
 
     return {
       success: true,
-      message: 'User updated successfully',
+      message: "User updated successfully",
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
+// Update the user profile
+export async function updateProfile(user: { name: string; email: string }) {
+  try {
+    const session = await auth();
+
+    const currentUser = await prisma.user.findFirst({
+      where: {
+        id: session?.user?.id,
+      },
+    });
+
+    if (!currentUser) throw new Error("User not found");
+
+    await prisma.user.update({
+      where: {
+        id: currentUser.id,
+      },
+      data: {
+        name: user.name,
+      },
+    });
+
+    return {
+      success: true,
+      message: "User updated successfully",
     };
   } catch (error) {
     return { success: false, message: formatError(error) };
