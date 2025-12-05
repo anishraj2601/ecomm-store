@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import ProductList from "@/components/shared/product/product-list";
-import { getLatestProducts } from "@/lib/actions/product.actions";
+import { getFeaturedProducts, getLatestProducts } from "@/lib/actions/product.actions";
+import ProductCarousel from "@/components/shared/product/product-carousel";
+import ViewAllProductsButton from "@/components/view-all-products-button";
 // import sampleData from "@/db/sample-data";
 
 export const metadata: Metadata = {
@@ -12,6 +14,7 @@ export const metadata: Metadata = {
 
 const Homepage = async () => {
   const latestProducts = await getLatestProducts();
+  const featuredProducts = await getFeaturedProducts();
   const products = latestProducts.map((p) => ({
     ...p,
     price: p.price.toString(), // Decimal -> string
@@ -22,7 +25,11 @@ const Homepage = async () => {
 
   return (
     <>
+    {featuredProducts.length > 0 && (
+        <ProductCarousel data={featuredProducts} />
+      )}
       <ProductList data={products} title="Newest Arrivals" limit={4} />
+      <ViewAllProductsButton />
     </>
   );
 };
