@@ -338,11 +338,27 @@ export async function getOrderSummary() {
 export async function getAllOrders({
   limit = PAGE_SIZE,
   page,
+  query,
 }: {
   limit?: number;
   page: number;
+  query: string;
 }) {
+  const queryFilter: Prisma.OrderWhereInput =
+    query && query !== "all"
+      ? {
+          user: {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            } as Prisma.StringFilter,
+          },
+        }
+      : {};
   const data = await prisma.order.findMany({
+    where: {
+      ...queryFilter,
+    },
     orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
@@ -362,11 +378,11 @@ export async function deleteOrder(id: string) {
   try {
     await prisma.order.delete({ where: { id } });
 
-    revalidatePath('/admin/orders');
+    revalidatePath("/admin/orders");
 
     return {
       success: true,
-      message: 'Order deleted successfully',
+      message: "Order deleted successfully",
     };
   } catch (error) {
     return { success: false, message: formatError(error) };
@@ -380,7 +396,7 @@ export async function updateOrderToPaidCOD(orderId: string) {
 
     revalidatePath(`/order/${orderId}`);
 
-    return { success: true, message: 'Order marked as paid' };
+    return { success: true, message: "Order marked as paid" };
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
@@ -395,8 +411,8 @@ export async function deliverOrder(orderId: string) {
       },
     });
 
-    if (!order) throw new Error('Order not found');
-    if (!order.isPaid) throw new Error('Order is not paid');
+    if (!order) throw new Error("Order not found");
+    if (!order.isPaid) throw new Error("Order is not paid");
 
     await prisma.order.update({
       where: { id: orderId },
@@ -410,7 +426,7 @@ export async function deliverOrder(orderId: string) {
 
     return {
       success: true,
-      message: 'Order has been marked delivered',
+      message: "Order has been marked delivered",
     };
   } catch (error) {
     return { success: false, message: formatError(error) };
