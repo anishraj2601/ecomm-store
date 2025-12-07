@@ -79,6 +79,7 @@ const SignUpForm = () => {
             name="name"
             type="text"
             autoComplete="name"
+            className="mt-2"
             defaultValue={signUpDefaultValues.name}
           />
         </div>
@@ -89,6 +90,7 @@ const SignUpForm = () => {
             name="email"
             type="text"
             autoComplete="email"
+            className="mt-2"
             defaultValue={signUpDefaultValues.email}
           />
         </div>
@@ -100,6 +102,7 @@ const SignUpForm = () => {
             type="password"
             required
             autoComplete="password"
+            className="mt-2"
             defaultValue={signUpDefaultValues.password}
           />
         </div>
@@ -111,6 +114,7 @@ const SignUpForm = () => {
             type="password"
             required
             autoComplete="confirmPassword"
+            className="mt-2"
             defaultValue={signUpDefaultValues.confirmPassword}
           />
         </div>

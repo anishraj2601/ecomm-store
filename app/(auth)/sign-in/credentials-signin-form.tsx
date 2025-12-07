@@ -55,6 +55,7 @@ const CredentialsSignInForm = () => {
             id="email"
             name="email"
             type="email"
+            className="mt-2"
             required
             autoComplete="email"
             defaultValue={signInDefaultValues.email}
@@ -66,6 +67,7 @@ const CredentialsSignInForm = () => {
             id="password"
             name="password"
             type="password"
+            className="mt-2"
             required
             autoComplete="current-password"
             defaultValue={signInDefaultValues.password}
