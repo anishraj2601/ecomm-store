@@ -19,6 +19,7 @@ import z from "zod";
 import { Prisma } from "../generated/prisma/client";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
+import { getMyCart } from "./cart.actions";
 
 // Sign in the user with credentials
 export async function signInWithCredentials(
@@ -44,6 +45,10 @@ export async function signInWithCredentials(
 
 // Sign user out
 export async function signOutUser() {
+  //delete current user's cart so it does not persist for next user
+  const currentCart = await getMyCart();
+  await prisma.cart.delete({ where: { id: currentCart?.id } });
+
   await signOut();
 }
 
@@ -190,11 +195,11 @@ export async function getAllUsers({
   query: string;
 }) {
   const queryFilter: Prisma.UserWhereInput =
-    query && query !== 'all'
+    query && query !== "all"
       ? {
           name: {
             contains: query,
-            mode: 'insensitive',
+            mode: "insensitive",
           } as Prisma.StringFilter,
         }
       : {};
@@ -203,7 +208,7 @@ export async function getAllUsers({
     where: {
       ...queryFilter,
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
   });
@@ -221,11 +226,11 @@ export async function deleteUser(id: string) {
   try {
     await prisma.user.delete({ where: { id } });
 
-    revalidatePath('/admin/users');
+    revalidatePath("/admin/users");
 
     return {
       success: true,
-      message: 'User deleted successfully',
+      message: "User deleted successfully",
     };
   } catch (error) {
     return {
@@ -246,11 +251,11 @@ export async function updateUser(user: z.infer<typeof updateUserSchema>) {
       },
     });
 
-    revalidatePath('/admin/users');
+    revalidatePath("/admin/users");
 
     return {
       success: true,
-      message: 'User updated successfully',
+      message: "User updated successfully",
     };
   } catch (error) {
     return { success: false, message: formatError(error) };
